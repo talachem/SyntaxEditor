@@ -21,22 +21,42 @@ public struct SyntaxEditor: View {
     
     var triggerCharacters: Set<Character> = ["#", "@", "&", "!", "["]
 
-    public init(text: Binding<String>, theme: EditorTheme = .default(), padding: CGFloat? = nil) {
+    public init(
+        text: Binding<String>,
+        theme: EditorTheme = .default(),
+        padding: CGFloat? = nil,
+        triggerCharacters: Set<Character> = ["#", "@", "&", "!", "["]
+    ) {
         self._text = text
         self.theme = theme
         self.padding = padding
+        self.triggerCharacters = triggerCharacters
     }
     
-    public init(text: Binding<String>, syntaxStyleRules: [SyntaxStyleRule], padding: CGFloat? = nil) {
+    public init(
+        text: Binding<String>,
+        syntaxStyleRules: [SyntaxStyleRule],
+        padding: CGFloat? = nil,
+        triggerCharacters: Set<Character> = ["#", "@", "&", "!", "["]
+    ) {
         self._text = text
         self.theme = EditorTheme(syntaxStyleRules: syntaxStyleRules)
         self.padding = padding
+        self.triggerCharacters = triggerCharacters
     }
     
-    public init(text: Binding<String>, font: NSFont, backgroundColor: NSColor, syntaxStyleRules: [SyntaxStyleRule] = SyntaxStyleRule.default(), padding: CGFloat? = nil) {
+    public init(
+        text: Binding<String>,
+        font: NSFont,
+        backgroundColor: NSColor,
+        syntaxStyleRules: [SyntaxStyleRule] = SyntaxStyleRule.default(),
+        padding: CGFloat? = nil,
+        triggerCharacters: Set<Character> = ["#", "@", "&", "!", "["]
+    ) {
         self._text = text
         self.theme = EditorTheme(font: font, backgroundColor: backgroundColor)
         self.padding = padding
+        self.triggerCharacters = triggerCharacters
     }
     
     public var body: some View {
