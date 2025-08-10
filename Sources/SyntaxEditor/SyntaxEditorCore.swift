@@ -80,6 +80,13 @@ struct SyntaxEditorCore: NSViewRepresentable {
         textView.isRichText = false
         textView.backgroundColor = theme.backgroundColor
         textView.allowsUndo = true
+        
+        textView.importsGraphics = false // Stops drag-and-drop image auto-inserts
+        
+        textView.isAutomaticTextReplacementEnabled = false // disables things like (c) -> ©
+        textView.isAutomaticDashSubstitutionEnabled = false // disables -- -> —
+        textView.isAutomaticQuoteSubstitutionEnabled = false // disables " -> “ ”
+        
         textView.delegate = context.coordinator
     }
     

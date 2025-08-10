@@ -30,9 +30,9 @@ extension SyntaxEditorCore {
                 return false
             }
             
-//            if handleTableRebalancing(in: textView, range: range) {
-//                return true // <- we already inserted newline within rebalanced table
-//            }
+            if handleTableRebalancing(in: textView, range: range) {
+                return true // <- we already inserted newline within rebalanced table
+            }
             
             if handleCharacterPairWrapping(in: textView, range: range, replacement: replacement) {
                 return false

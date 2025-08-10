@@ -158,6 +158,12 @@ public struct SyntaxStyleRule {
                 baseline: .raised,
                 glyphRange: .leadingAndTrailing(2, 1)
             ),
+            SyntaxStyleRule(
+                pattern: "(?<=\\|)([^|\\n]+)(?=\\|)",
+                font: .monospace,
+                size: baseFontSize,
+                glyphRange: .leadingAndTrailing(1, 1)
+            ),
             SyntaxStyleRule(glyphs: "`", font: .monospace, size: baseFontSize, glyphRange: .leadingAndTrailing(1, 1)),
             SyntaxStyleRule(glyphs: "==", size: baseFontSize, style: [.underline], glyphRange: .leadingAndTrailing(2, 2)),
             SyntaxStyleRule(glyphs: "~~", size: 12, style: [.strikethrough], glyphRange: .leadingAndTrailing(2, 2)),
