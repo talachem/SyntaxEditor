@@ -1,10 +1,25 @@
 # A Syntax Editor for SwiftUI
 
-This is basically a Markdown Syntax Editor for SwiftUI. It was inspired by [HighlightedTextEditor](https://github.com/kyle-n/HighlightedTextEditor), which I still believe to be surpior to this one. But I needed something a little bit different. Hence I searched for tutorials and found this [one](https://sebwhitfield.medium.com/building-a-code-editor-using-swiftui-bb74819b5c1f).
+This is a Markdown-style syntax editor built with SwiftUI. It was inspired by HighlightedTextEditor, which I still believe is superior in many ways. However, I needed something slightly different.
 
-What I needed was not just one editor view, I wanted to stack several editors view in a scroll view, since NSTextView does not play nice with this, there was some trickery and now it works. More importantly I wanted to be able to extract syntax highlighted snippets from text, read tags. This was achieved by the editor returning every string, that gets text attributes.
+While searching for approaches, I found this tutorial, which helped form the foundation of this project.
 
-This can be done like so:
+Why this exists
+
+I needed:
+- Multiple editor views in a scroll view — NSTextView doesn’t handle this well, so some workaround code was required.
+- Extraction of syntax-highlighted snippets — not just to render them, but to capture “tags” from the text.
+- A lightweight syntax viewer — for displaying pre-styled text without editing.
+
+The editor now:
+- Returns each styled string via `.stylingResults { ... }`
+- Supports onPaste closures to handle pasted text
+- Has a SyntaxViewer for read-only, syntax-styled text
+
+
+## Usage
+
+Editor example:
 
 ```swift
 SyntaxEditor(text: $text)
@@ -13,21 +28,40 @@ SyntaxEditor(text: $text)
     }
 ```
 
-Similarly it can return pasted text on `onPaste` in a closure. And what I finally needed was a simple text viewer, which uses the same syntax rules. Hence the syntax text viewer, which can be used like so:
+Viewer example:
 
 ```swift
 SyntaxViewer(text: text)
 ```
 
-This is a normal SwiftUI text view with attributed strings. So it's nothing fancy. The text editor has different inits, where background colors, syntax rules or editor themes can be defined. Syntax styling rules are still something that is very verbose and needs a lot of work. Here's how some basics are created:
+The viewer is just a SwiftUI Text view with attributed strings, so it’s lightweight and fast.
 
+## Customization
+
+The editor supports:
+- Background colors
+- Syntax rules
+- Editor themes
+- Styling via glyphs **or** regex
+
+
+**Glyph example:**
 ```swift
-SyntaxStyleRule(glyphs: ["_", "*", "/"], size: baseFontSize, style: [.italic], glyphRange: .leadingAndTrailing(1, 1)),
-SyntaxStyleRule(glyphs: ["__", "**", "//"], size: baseFontSize, style: [.bold], glyphRange: .leadingAndTrailing(2, 2)), 
+SyntaxStyleRule(
+    glyphs: ["_", "*", "/"],
+    size: baseFontSize,
+    style: [.italic],
+    glyphRange: .leadingAndTrailing(1, 1)
+),
+SyntaxStyleRule(
+    glyphs: ["__", "**", "//"],
+    size: baseFontSize,
+    style: [.bold],
+    glyphRange: .leadingAndTrailing(2, 2)
+) 
 ```
 
-But they can be created from regex patterns as well:
-
+**Regex example:**
 ```swift
 SyntaxStyleRule(
     pattern: "^>.*",
@@ -36,5 +70,12 @@ SyntaxStyleRule(
     size: baseFontSize,
     alignment: .right,
     glyphRange: .leadingOnly(1)
+),
+SyntaxStyleRule(
+    pattern: "^//.*$",
+    options: [.anchorsMatchLines],
+    color: .gray,
+    size: baseFontSize,
+    glyphRange: .not
 )
 ```
