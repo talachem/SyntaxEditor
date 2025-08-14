@@ -30,9 +30,9 @@ extension SyntaxEditorCore {
                 return false
             }
             
-            if handleTableRebalancing(in: textView, range: range) {
-                return true // <- we already inserted newline within rebalanced table
-            }
+//            if handleTableRebalancing(in: textView, range: range) {
+//                return true // <- we already inserted newline within rebalanced table
+//            }
             
             if handleCharacterPairWrapping(in: textView, range: range, replacement: replacement) {
                 return false
@@ -110,25 +110,41 @@ extension SyntaxEditorCore {
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
             
+            var pasted = false
+            var pastedString: String?
+
             if let pasteboardString = NSPasteboard.general.string(forType: .string),
                pasteboardString != lastPasteboardString,
                textView.string.contains(pasteboardString) {
-                
+
                 lastPasteboardString = pasteboardString
+                pastedString = pasteboardString
                 self.parent.onPaste?(pasteboardString)
+                pasted = true
             }
 
             let fullText = textView.string
             self.parent.text = fullText
-            
+
             if let selectedRange = textView.selectedRanges.first?.rangeValue {
-                let paragraphRange = (fullText as NSString).paragraphRange(for: selectedRange)
-                let paragraph = (fullText as NSString).substring(with: (fullText as NSString).paragraphRange(for: selectedRange))
-                self.parent.onParagraphChange?(paragraph)
-                self.parent.onTextChange?(fullText)
-                
-                let results = applySyntaxStyling(in: paragraphRange)
-                parent.stylingResults?(results)
+                if pasted, let pastedString = pastedString {
+                    let start = max(selectedRange.location - pastedString.count, 0)
+                    let pasteRange = NSRange(location: start, length: pastedString.count)
+                    let paragraphRange = (fullText as NSString).paragraphRange(for: pasteRange)
+
+                    let results = applySyntaxStyling(in: paragraphRange)
+                    parent.stylingResults?(results)
+
+                } else {
+                    let paragraphRange = (fullText as NSString).paragraphRange(for: selectedRange)
+                    let paragraph = (fullText as NSString).substring(with: paragraphRange)
+
+                    self.parent.onParagraphChange?(paragraph)
+                    self.parent.onTextChange?(fullText)
+
+                    let results = applySyntaxStyling(in: paragraphRange)
+                    parent.stylingResults?(results)
+                }
             }
         }
         

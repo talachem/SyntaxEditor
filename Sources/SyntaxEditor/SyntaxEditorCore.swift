@@ -93,7 +93,7 @@ struct SyntaxEditorCore: NSViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-        
+    
     func recalculateHeight(for textView: NSTextView) {
         guard let layoutManager = textView.layoutManager,
               let textContainer = textView.textContainer else { return }
