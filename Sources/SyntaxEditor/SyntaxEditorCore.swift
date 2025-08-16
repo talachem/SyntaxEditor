@@ -11,9 +11,11 @@ import AppKit
 public typealias TextChange = (String) -> Void
 public typealias SelectionChange = ([NSRange]) -> Void
 public typealias StylingResults = (Set<LabelWithOffset>) -> Void
+public typealias Insertion = (InsertionHandler) -> Void
 
 struct SyntaxEditorCore: NSViewRepresentable {
     @Binding var text: String
+    @Binding var searchQuery: String?
     @Binding var calculatedHeight: CGFloat
     
     var theme: EditorTheme = .default()
@@ -23,6 +25,7 @@ struct SyntaxEditorCore: NSViewRepresentable {
     var onPaste: TextChange? = nil
     var onSelectionChange: SelectionChange? = nil
     var stylingResults: StylingResults? = nil
+    var insertionHandler: Insertion? = nil
     
     var triggerCharacters: Set<Character> = ["#", "@", "&", "!", "["]
     
@@ -36,6 +39,11 @@ struct SyntaxEditorCore: NSViewRepresentable {
         textView.string = self.text
         textView.delegate = context.coordinator
         context.coordinator.applySyntaxStyling()
+        
+        DispatchQueue.main.async {
+            let controller = SyntaxEditorController(textView: textView)
+            insertionHandler?(controller)
+        }
         
         view.hasVerticalScroller = false
         view.verticalScrollElasticity = .none
@@ -71,6 +79,8 @@ struct SyntaxEditorCore: NSViewRepresentable {
                 self.calculatedHeight = height + 15 // or your preferred padding
             }
         }
+        
+        context.coordinator.updateSearchHighlights(for: searchQuery)
     }
         
     func configureTextView(_ textView: NSTextView, with context: Context) {

@@ -69,9 +69,13 @@ extension SyntaxEditorCore.Coordinator {
                 
                 attributedString.addAttributes(attributes, range: match.range)
                 
-                if let first = substring.first, parent.triggerCharacters.contains(first), !attributes.isEmpty && substring.trimmingCharacters(in: .whitespacesAndNewlines).count > 1 {
+                if let first = substring.first, parent.triggerCharacters.contains(first),
+                   !attributes.isEmpty &&
+                    substring.trimmingCharacters(in: .whitespacesAndNewlines).count > 1 &&
+                    regex.pattern != ".*"
+                {
                     attributedString.addAttributes(attributes, range: match.range)
-                    results.insert(LabelWithOffset(label: substring, offset: match.range.location))
+                    results.insert(LabelWithOffset(label: substring, offset: match.range.location, trigger: String(first)))
                 }
             }
             
@@ -135,8 +139,8 @@ extension SyntaxEditorCore.Coordinator {
     }
 }
 
-
 public struct LabelWithOffset: Hashable {
     public var label: String
     public var offset: Int
+    public var trigger: String
 }

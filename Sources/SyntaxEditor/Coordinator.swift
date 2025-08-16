@@ -4,6 +4,7 @@
 //
 //  Created by Johannes Bilk on 03.08.25.
 //
+
 import Foundation
 import AppKit
 
@@ -29,10 +30,6 @@ extension SyntaxEditorCore {
             if replacement == "\n", handleListContinuation(in: textView, range: range) {
                 return false
             }
-            
-//            if handleTableRebalancing(in: textView, range: range) {
-//                return true // <- we already inserted newline within rebalanced table
-//            }
             
             if handleCharacterPairWrapping(in: textView, range: range, replacement: replacement) {
                 return false
